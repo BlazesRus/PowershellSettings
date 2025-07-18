@@ -93,8 +93,61 @@ $pnpmFolder = Find-ExecutableFolder -Name pnpm  -SearchPaths $Global:pnpmSearchP
 # 5) Also include npm’s true global bin (where shims live)
 try { $npmBin = (npm bin -g).Trim() } catch {}
 
+# new: detect pnpm’s global-bin folder
+try {
+  $pnpmGlobalBin = (pnpm bin -g).Trim()
+} catch {
+  $pnpmGlobalBin = $null
+}
+
+### Locate wasm-opt in npm/pnpm Binaryen ###
+# Include Node/npm/pnpm global bins plus typical Binaryen package folders
+$Global:WasmOptSearchPaths = @(
+  $pnpmGlobalBin,
+  $npmBin,
+  # Look inside a binaryen package if installed by pnpm/npm
+  (Join-Path $pnpmGlobalBin 'node_modules\binaryen\bin'),
+  (Join-Path $npmBin      'node_modules\binaryen\bin'),
+  "$env:ProgramFiles\binaryen\bin",
+  "$HOME\.cargo\bin",
+  "/usr/local/bin",
+  "/usr/bin"
+)
+
+function Find-WasmOpt {
+  foreach ($dir in $Global:WasmOptSearchPaths) {
+    foreach ($exeName in @('wasm-opt.exe','wasm-opt')) {
+      $path = Join-Path $dir $exeName
+      if (Test-Path $path) { return (Resolve-Path $path).Path }
+    }
+  }
+  return $null
+}
+
+# Cache it once
+$script:WasmOptExe = Find-WasmOpt
+if ($script:WasmOptExe) {
+  Write-Host "Found wasm-opt at: $script:WasmOptExe" -ForegroundColor Green
+} else {
+  Write-Host "⚠️  wasm-opt not found in pnpm/npm Binaryen paths" -ForegroundColor Yellow
+}
+
+function Invoke-WasmOpt {
+  param(
+    [string[]]$Flags
+  )
+  if (-not $script:WasmOptExe) {
+    Write-Error 'wasm-opt not found in your PATH or search paths.'
+    return
+  }
+  & $script:WasmOptExe @Flags
+}
+
+# alias for brevity
+Set-Alias wasmopt Invoke-WasmOpt -Force
+
 # 6) Prepend each folder once
-@($nodeFolder,$pnpmFolder,$npmBin) |
+@($nodeFolder,$pnpmFolder,$npmBin, $pnpmGlobalBin) |
   Where-Object { $_ -and (Test-Path $_) } |
   ForEach-Object {
     if ($env:PATH -notmatch [regex]::Escape($_)) {
@@ -213,7 +266,7 @@ function Test-NodePnpmSetup {
     $cmd = $_.Value
     if (Get-Command $cmd -ErrorAction SilentlyContinue) {
       Write-Host "  Command: $($cmd.Source)" -ForegroundColor White
-      Write-Host "  ✅ $cmd: $(& $cmd --version)" -ForegroundColor Green
+      Write-Host "  ✅ $($cmd): $( & $cmd --version )" -ForegroundColor Green
     } else {
       Write-Host "  ❌ $cmd not found" -ForegroundColor Red
     }
@@ -227,22 +280,49 @@ function Test-NodePnpmSetup {
 Set-Alias -Name "test-setup" -Value "Test-NodePnpmSetup"
 
 if ($Host.Name -eq 'ConsoleHost') {
-	Write-Host "Use 'test-setup' to verify Node.js and pnpm configuration" -ForegroundColor Gray
+	Write-Verbose "Use 'test-setup' to verify Node.js and pnpm configuration"
 }
 
 #Powershell 5.1 Compatibility Extensions
 
-# Auto-import Windows PowerShell modules when needed
-function Import-WindowsModule {
+# ── Only define compatibility helpers when running PS Core (6+) ──
+if ($PSVersionTable.PSEdition -eq 'Core') {
+
+  # Auto-import Windows PowerShell modules through a PS 5.1 process
+  function Import-WindowsModule {
     param([string]$Name)
     Import-Module $Name -UseWindowsPowerShell -ErrorAction Stop
+  }
+
+  # Explicit loader functions (more reliable than aliasing a scriptblock)
+  function Load-ActiveDirectory    { Import-WindowsModule ActiveDirectory }
+  function Load-DnsClient          { Import-WindowsModule DnsClient }
+  function Load-GroupPolicy        { Import-WindowsModule GroupPolicy }
+  function Load-DHCPServer         { Import-WindowsModule DHCPServer }
+  function Load-FailoverClusters   { Import-WindowsModule FailoverClusters }
+
+  # Bring back PS 5.1 shorthands in PS Core
+  Set-Alias Where   Where-Object      -Option AllScope
+  Set-Alias Foreach ForEach-Object    -Option AllScope
+  Set-Alias Invoke  Invoke-Command    -Option AllScope
+  Set-Alias IEX     Invoke-Expression -Option AllScope
+
+  # Batch loader if you need more in one go
+  function Load-WindowsModules {
+    param([string[]]$Modules)
+    foreach ($m in $Modules) { Import-WindowsModule $m }
+  }
+
 }
-
-# Example: load ActiveDirectory from PS5.1 on demand
-Set-Alias Load-ADModule { Import-WindowsModule ActiveDirectory }
-
 
 ### Final Banner ###
 if ($Host.Name -eq 'ConsoleHost') {
-	Write-Host "Profile loaded: UTF8 ✔ Copilot ✔ Node.js: $($nodeJsPath -and (& node --version)) pnpm: $($pnpmPath -and (& pnpm --version))" -ForegroundColor Cyan
+  # Use the actual $nodePath/$pnpmPath variables you defined above
+  $nodeVer = try { & node --version } catch { 'n/a' }
+  $pnpmVer = try { & pnpm --version } catch { 'n/a' }
+
+  Write-Host (
+    "Profile loaded: UTF8 ✔ Copilot ✔ " +
+    "Node.js: $nodeVer pnpm: $pnpmVer"
+  ) -ForegroundColor Cyan
 }
