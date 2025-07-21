@@ -56,7 +56,8 @@ Reusable PowerShell configuration that bridges PowerShell 5.1 and PowerShell 7+ 
    git submodule add https://github.com/BlazesRus/PowershellSettings PowershellSettings
 	
 2. Place the terminal script in your VS Code workspace or user profile(either of 2 options):
-  - VS Code Workspace Settings (.code-workspace):
+  - **VS Code Workspace Settings (.code-workspace)**:
+  ```
 	{
 		"terminal.integrated.profiles.windows": {
 			"PowerShell 7": {
@@ -79,8 +80,9 @@ Reusable PowerShell configuration that bridges PowerShell 5.1 and PowerShell 7+ 
 		"terminal.integrated.defaultProfile.windows": "PowerShell 7",
 		"terminal.integrated.automationProfile.windows": "PowerShell 7"
 	}
+  ```
 
-   - Extending a User Profile with this profile ($PROFILE in PowerShell):
+  - **Extending a User Profile with this profile ($PROFILE in PowerShell)**:
 	# In your $PROFILE (e.g. $HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1)
 	& "$HOME\path\to\PowershellSettings\PowerShellTerminal.ps1"
 
