@@ -102,17 +102,19 @@ Reusable PowerShell configuration that bridges PowerShell 5.1 and PowerShell 7+ 
 
 ## Usage
 
--Prepending a pathDirectory (or file) to path:
+- **Prepending a pathDirectory (or file) to path**
 	Prepend-PathEntry pathToPrepend
 	
--Manually Emit Copilot Done Marker:
-# After a long-running task:
-done
+- **Manually Emit Copilot Done Marker**
+  After a long-running task, type:
+  done
+  in console.
 
--Null-Coalescing in PS 5.1:
+- **Null-Coalescing in PS 5.1**
 	$value = NullCheck { $possiblyNull } { Get-DefaultValue }
 
--TinyGo build fix (if enabled): Automatically runs at startup.
+- **TinyGo build fix (if enabled)**
+   Automatically runs at startup.
 
 ---
 
