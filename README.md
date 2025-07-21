@@ -83,12 +83,13 @@ Reusable PowerShell configuration that bridges PowerShell 5.1 and PowerShell 7+ 
   ```
 
   - **Extending a User Profile with this profile ($PROFILE in PowerShell)**:
+  ```
 	# In your $PROFILE (e.g. $HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1)
 	& "$HOME\path\to\PowershellSettings\PowerShellTerminal.ps1"
-
+  ```
 
 3. In your PowerShell script or profile, dot-source the module:
-
+  ```
 	#Adjust the $profilePath to actual PowershellSettings path
 	$profilePath = Join-Path $PSScriptRoot 'PowershellSettings' 'PowerShellTerminal.ps1'
 	if (Test-Path $profilePath) {
@@ -96,20 +97,22 @@ Reusable PowerShell configuration that bridges PowerShell 5.1 and PowerShell 7+ 
 	} else {
       throw "Profile not found at $profilePath"
 	}
-
+  ```
 	
-4. Create and customize PowershellSettings/ProfileSettings.psd1.
+4. Customize PowershellSettings/ProfileSettings.psd1.
 
 ---
 
 ## Usage
 
-- **Prepending a pathDirectory (or file) to path**
+- **Prepending a pathDirectory (or file) to path**:
 	Prepend-PathEntry pathToPrepend
 	
-- **Manually Emit Copilot Done Marker**
+- **Manually Emit Copilot Done Marker**:
   After a long-running task, type:
+  ```
   done
+  ```
   in console.
 
 - **Null-Coalescing in PS 5.1**
