@@ -10,7 +10,8 @@ Reusable PowerShell configuration module that bridges compatibility between lega
   Supports PowerShell 5.1 syntax while executing seamlessly in PowerShell 7.0+ environments.
 
 - 🧠 **Smart alias and command discovery**  
-  Automatically detects platform-dependent developer tools (Node.js, pnpm, Go, TinyGo, wasm-opt, etc.) and exposes them via consistent aliases.
+  Enables use of Node.js, pnpm, wasm-opt as you would in Powershell 5.1
+	(later enabling automatic detection of Go and TinyGo and other platform-depenent tools)
 
 - 🎨 **Structured terminal output**  
   Verbose, color-coded messaging for improved developer experience and log readability.
@@ -37,7 +38,7 @@ git submodule add https://github.com/BlazesRus/PowershellSettings PowershellSett
 In your PowerShell script or profile, dot-source the module:
 
 #Adjust the $profilePath to actual PowershellSettings path
-$profilePath = Join-Path $PSScriptRoot 'PowershellSettings' 'Microsoft.PowerShell_profile.ps1'
+$profilePath = Join-Path $PSScriptRoot 'PowershellSettings' 'PowerShellTerminal.ps1'
 if (Test-Path $profilePath) {
     . $profilePath
 } else {
@@ -51,7 +52,7 @@ Now all aliases and detection logic are active in your session.
 
 ## Folder Structure
 
-- `Microsoft.PowerShell_profile.ps1` — core profile logic 
+- `PowerShellTerminal.ps1` — core profile logic 
 
 ---
 
