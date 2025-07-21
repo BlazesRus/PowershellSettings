@@ -15,7 +15,7 @@ Reusable PowerShell configuration that bridges PowerShell 5.1 and PowerShell 7+ 
 - [Folder Structure](#folder-structure)
 - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
-- [Attribution (AI Assistance)](#Attribution)
+- [Attribution(AI Assistance)](#attribution)
 - [License](#license)
 
 ---
@@ -45,8 +45,8 @@ Reusable PowerShell configuration that bridges PowerShell 5.1 and PowerShell 7+ 
   PS C:\path\to\repo (main)> 
 
 - **Helper Functions & Aliases**
-  - Explicit wrapper functions to let pnpm and wasm-opt ensure they work as they do in Powershell 5.1
-	- wasmOpt alias function for wasm-opt
+  - *Explicit wrapper functions to let pnpm and wasm-opt ensure they work as they do in Powershell 5.1*
+  - *wasmOpt alias function for wasm-opt*
 - ** Optional built-in TinyGo pathing fix
 
 ## Installation
@@ -54,51 +54,51 @@ Reusable PowerShell configuration that bridges PowerShell 5.1 and PowerShell 7+ 
 1. **Add to your repo**  
    ```bash
    git submodule add https://github.com/BlazesRus/PowershellSettings PowershellSettings
-	
+  
 2. Place the terminal script in your VS Code workspace or user profile(either of 2 options):
   - **VS Code Workspace Settings (.code-workspace)**:
   ```
-	{
-		"terminal.integrated.profiles.windows": {
-			"PowerShell 7": {
-				"path": [
-					"${env:ProgramFiles}\\PowerShell\\7\\pwsh.exe",
-					"${env:ProgramFiles(x86)}\\PowerShell\\7\\pwsh.exe",
-					"pwsh.exe"
-				],
-				"icon": "terminal-powershell",
-				"args": [
-					"-NoLogo",
-					"-NoExit",
-					"-ExecutionPolicy", "Bypass",
-					"-Command",
-					"& \"${workspaceFolder:projectroot}/PowershellSettings/PowerShellTerminal.ps1\""
-				],
-				"overrideName": true
-			}
-		},
-		"terminal.integrated.defaultProfile.windows": "PowerShell 7",
-		"terminal.integrated.automationProfile.windows": "PowerShell 7"
-	}
+  {
+    "terminal.integrated.profiles.windows": {
+      "PowerShell 7": {
+        "path": [
+          "${env:ProgramFiles}\\PowerShell\\7\\pwsh.exe",
+          "${env:ProgramFiles(x86)}\\PowerShell\\7\\pwsh.exe",
+          "pwsh.exe"
+        ],
+        "icon": "terminal-powershell",
+        "args": [
+          "-NoLogo",
+          "-NoExit",
+          "-ExecutionPolicy", "Bypass",
+          "-Command",
+          "& \"${workspaceFolder:projectroot}/PowershellSettings/PowerShellTerminal.ps1\""
+        ],
+        "overrideName": true
+      }
+    },
+    "terminal.integrated.defaultProfile.windows": "PowerShell 7",
+    "terminal.integrated.automationProfile.windows": "PowerShell 7"
+  }
   ```
 
   - **Extending a User Profile with this profile ($PROFILE in PowerShell)**:
   ```
-	# In your $PROFILE (e.g. $HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1)
-	& "$HOME\path\to\PowershellSettings\PowerShellTerminal.ps1"
+  # In your $PROFILE (e.g. $HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1)
+  & "$HOME\path\to\PowershellSettings\PowerShellTerminal.ps1"
   ```
 
 3. In your PowerShell script or profile, dot-source the module:
   ```
-	#Adjust the $profilePath to actual PowershellSettings path
-	$profilePath = Join-Path $PSScriptRoot 'PowershellSettings' 'PowerShellTerminal.ps1'
-	if (Test-Path $profilePath) {
+  #Adjust the $profilePath to actual PowershellSettings path
+  $profilePath = Join-Path $PSScriptRoot 'PowershellSettings' 'PowerShellTerminal.ps1'
+  if (Test-Path $profilePath) {
       . $profilePath
-	} else {
+  } else {
       throw "Profile not found at $profilePath"
-	}
+  }
   ```
-	
+  
 4. Customize PowershellSettings/ProfileSettings.psd1.
 
 ---
@@ -106,8 +106,10 @@ Reusable PowerShell configuration that bridges PowerShell 5.1 and PowerShell 7+ 
 ## Usage
 
 - **Prepending a pathDirectory (or file) to path**:
-	Prepend-PathEntry pathToPrepend
-	
+  ```
+  Prepend-PathEntry pathToPrepend
+  ```
+  
 - **Manually Emit Copilot Done Marker**:
   After a long-running task, type:
   ```
@@ -115,10 +117,12 @@ Reusable PowerShell configuration that bridges PowerShell 5.1 and PowerShell 7+ 
   ```
   in console.
 
-- **Null-Coalescing in PS 5.1**
-	$value = NullCheck { $possiblyNull } { Get-DefaultValue }
+- **Null-Coalescing in PS 5.1**:
+  ```
+  $value = NullCheck { $possiblyNull } { Get-DefaultValue }
+  ```
 
-- **TinyGo build fix (if enabled)**
+- **TinyGo build fix (if enabled)**:
    Automatically runs at startup.
 
 ---
@@ -130,12 +134,12 @@ Edit PowershellSettings/ProfileSettings.psd1 to control profile behavior
 ---
 
 ## Folder Structure
-
+```
 PowershellSettings/
 ├─ ProfileSettings.psd1    # User-tweakable settings
 ├─ PowerShellTerminal.ps1  # Core profile logic
 └─ …                       # (Optional helpers, future scripts)
-
+```
 ---
 
 ## Troubleshooting
@@ -146,9 +150,13 @@ PowershellSettings/
 - **EPERM on `pnpm.CMD`**
   1. Run PowerShell as Administrator
   2. enable corepack manually by either:
+  ```
     corepack prepare pnpm@latest --activate
+  ```
     or
+  ```
     corepack enable pnpm
+  ```
 
 - **Invalid ProfileSettings.psd1**
   Ensure it is a pure hashtable literal (@{ key = value; }) with no in-table assignments.
