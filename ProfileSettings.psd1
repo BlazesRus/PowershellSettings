@@ -15,12 +15,10 @@
   # Otherwise, make all Out-File/Set-Content/Add-Content/Export-Csv use UTF-8 with BOM
   useBOM            = $true
 
-  # If true, enable TinyGo fix
+  # If true, enable TinyGo fix(auto-prepend goRoot--ensures go is in front of path)
   enableTinyGoFix   = $false
 
-  # Path to the TinyGo executable
+  # TinyGo & Go paths
   tinygoExe         = 'C:\PLanguages\tinygo\bin\tinygo.exe'
-
-  # Ensure the Go SDK bin folder is on PATH
   goRoot            = 'C:\PLanguages\Go\bin'
 }
